@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"testMKP/belajar/helper"
 	"testMKP/controllers"
 	"testMKP/database"
+	"testMKP/helper"
 	"testMKP/repositories"
 	"testMKP/routes"
 	"testMKP/services"
@@ -26,7 +26,7 @@ func main() {
 		}
 		fmt.Println("MongoDB connection closed")
 	}()
-	
+
 	mongoDB := database.GetDatabase(mongoClient, "productdb")
 
 	userRepository := repositories.NewUserRepositoryImpl(db)
