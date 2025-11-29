@@ -1,0 +1,874 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "User & Product RESTful API",
+    "description": "API Specification untuk User (PostgreSQL) dan Product (MongoDB) dengan validasi input",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Development Server"
+    }
+  ],
+  "paths": {
+    "/users/create": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create new user",
+        "description": "Membuat user baru dengan validasi email dan panjang karakter",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateRequest"
+              },
+              "examples": {
+                "valid": {
+                  "summary": "Valid user data",
+                  "value": {
+                    "name": "Johan 01",
+                    "email": "Johan.01@example.com"
+                  }
+                },
+                "invalid_email": {
+                  "summary": "Invalid email format",
+                  "value": {
+                    "name": "Johan 01",
+                    "email": "invalid-email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Johan 01",
+                    "email": "Johan.01@example.com"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "email_invalid": {
+                    "summary": "Invalid email format",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "error": "format email tidak valid"
+                    }
+                  },
+                  "name_too_short": {
+                    "summary": "Name too short",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "error": "name minimal 3 karakter"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/list": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Mendapatkan semua data user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success get all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersListResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Johan 01",
+                      "email": "Johan.01@example.com"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Jane Smith",
+                      "email": "jane.smith@example.com"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/detail": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "description": "Mendapatkan detail user berdasarkan ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IDRequest"
+              },
+              "example": {
+                "id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success get user detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Johan 01",
+                    "email": "Johan.01@example.com"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 404,
+                  "status": "NOT FOUND",
+                  "error": "User tidak ditemukan"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/update": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "description": "Update data user berdasarkan ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              },
+              "example": {
+                "id": 1,
+                "name": "Johan 01 Updated",
+                "email": "Johan.updated@example.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": 1,
+                    "name": "Johan 01 Updated",
+                    "email": "Johan.updated@example.com"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/delete": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "description": "Menghapus user berdasarkan ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IDRequest"
+              },
+              "example": {
+                "id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": "User berhasil dihapus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/create": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Create new product",
+        "description": "Membuat product baru dengan validasi name dan price",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreateRequest"
+              },
+              "examples": {
+                "valid": {
+                  "summary": "Valid product data",
+                  "value": {
+                    "name": "Laptop Gaming",
+                    "price": 15000000
+                  }
+                },
+                "invalid_price": {
+                  "summary": "Invalid price (zero or negative)",
+                  "value": {
+                    "name": "Laptop Gaming",
+                    "price": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": "673a5e8f9c8d4b2a1f3e5d7c",
+                    "name": "Laptop Gaming",
+                    "price": 15000000
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "price_invalid": {
+                    "summary": "Price must be greater than 0",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "error": "price harus lebih besar dari 0"
+                    }
+                  },
+                  "name_too_short": {
+                    "summary": "Name too short",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "error": "name minimal 3 karakter"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/list": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Get all products",
+        "description": "Mendapatkan semua data product",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success get all products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsListResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": [
+                    {
+                      "id": "673a5e8f9c8d4b2a1f3e5d7c",
+                      "name": "Laptop Gaming",
+                      "price": 15000000
+                    },
+                    {
+                      "id": "673a5e909c8d4b2a1f3e5d7d",
+                      "name": "Mouse Gaming",
+                      "price": 500000
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/detail": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Get product by ID",
+        "description": "Mendapatkan detail product berdasarkan ObjectID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectIDRequest"
+              },
+              "example": {
+                "id": "673a5e8f9c8d4b2a1f3e5d7c"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success get product detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": "673a5e8f9c8d4b2a1f3e5d7c",
+                    "name": "Laptop Gaming",
+                    "price": 15000000
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 404,
+                  "status": "NOT FOUND",
+                  "error": "Product tidak ditemukan"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/update": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Update product",
+        "description": "Update data product berdasarkan ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductUpdateRequest"
+              },
+              "example": {
+                "id": "673a5e8f9c8d4b2a1f3e5d7c",
+                "name": "Laptop Gaming Updated",
+                "price": 16000000
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": {
+                    "id": "673a5e8f9c8d4b2a1f3e5d7c",
+                    "name": "Laptop Gaming Updated",
+                    "price": 16000000
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/delete": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Delete product",
+        "description": "Menghapus product berdasarkan ID",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectIDRequest"
+              },
+              "example": {
+                "id": "673a5e8f9c8d4b2a1f3e5d7c"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "data": "Product berhasil dihapus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Johan 01"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "Johan.01@example.com"
+          }
+        }
+      },
+      "UserCreateRequest": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Johan 01",
+            "description": "Nama user (minimal 3 karakter, maksimal 100 karakter)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "Johan.01@example.com",
+            "description": "Email dengan format valid"
+          }
+        }
+      },
+      "UserUpdateRequest": {
+        "type": "object",
+        "required": ["id", "name", "email"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Johan 01 Updated"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "Johan.updated@example.com"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "673a5e8f9c8d4b2a1f3e5d7c",
+            "description": "MongoDB ObjectID (24 karakter hex)"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Laptop Gaming"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0.01,
+            "example": 15000000
+          }
+        }
+      },
+      "ProductCreateRequest": {
+        "type": "object",
+        "required": ["name", "price"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Laptop Gaming",
+            "description": "Nama product (minimal 3 karakter, maksimal 100 karakter)"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0.01,
+            "example": 15000000,
+            "description": "Harga product (harus lebih besar dari 0)"
+          }
+        }
+      },
+      "ProductUpdateRequest": {
+        "type": "object",
+        "required": ["id", "name", "price"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "673a5e8f9c8d4b2a1f3e5d7c"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Laptop Gaming Updated"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0.01,
+            "example": 16000000
+          }
+        }
+      },
+      "IDRequest": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "description": "User ID (integer)"
+          }
+        }
+      },
+      "ObjectIDRequest": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 24,
+            "maxLength": 24,
+            "example": "673a5e8f9c8d4b2a1f3e5d7c",
+            "description": "MongoDB ObjectID (24 karakter hex)"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "UsersListResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
+      "ProductResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Product"
+          }
+        }
+      },
+      "ProductsListResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "string",
+            "example": "Operation successful"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "BAD REQUEST"
+          },
+          "error": {
+            "type": "string",
+            "example": "Validation error message"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Endpoint untuk mengelola data User menggunakan PostgreSQL dengan Raw Query"
+    },
+    {
+      "name": "Products",
+      "description": "Endpoint untuk mengelola data Product menggunakan MongoDB"
+    }
+  ]
+}
