@@ -60,7 +60,7 @@ func (u *UserRepositoryImpl) Update(user models.UserUpdateRequest) (models.User,
 	query := "UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email"
 
 	var result models.User
-	err := u.DB.QueryRow(query, user.ID, user.Name, user.Email).Scan(&result.ID, &result.Name, &result.Email)
+	err := u.DB.QueryRow(query, user.Name, user.Email, user.ID).Scan(&result.ID, &result.Name, &result.Email)
 	if err != nil {
 		return models.User{}, err
 	}
