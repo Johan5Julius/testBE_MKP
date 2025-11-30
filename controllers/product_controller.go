@@ -222,7 +222,7 @@ func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(helper.WebResponse{
 			Code:   http.StatusNotFound,
 			Status: "Not found",
-			Error:  "User tidak di temukan",
+			Error:  "Product tidak di temukan",
 		})
 		return
 	}
